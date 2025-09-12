@@ -5,11 +5,6 @@ import logging
 
 COMMAND_PREFIX = "!"
 DOWNLOADS_DIR = "downloads"
-MUSIC_QUEUE = deque()
-CURRENT_SONG = None
-REPEAT_MODE = False
-VOLUME = 0.8
-NOW_PLAYING_MESSAGE = None
 
 # Neue Konfigurationsoptionen
 MAX_QUEUE_SIZE = 20
@@ -35,8 +30,6 @@ DOWNLOADS_PATH = os.path.join(BASE_DIR, DOWNLOADS_DIR)
 if not os.path.exists(DOWNLOADS_PATH):
     os.makedirs(DOWNLOADS_PATH)
 
-# Initialize logging
-logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT, datefmt=LOG_DATE_FORMAT)
 
 #Rest of the bot code would go here.  Example:
 #intents = discord.Intents.default()

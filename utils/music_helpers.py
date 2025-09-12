@@ -91,7 +91,7 @@ async def download_audio(ctx, song, logger):
             'preferredquality': '192',
         }],
         'outtmpl': f'{DOWNLOADS_DIR}/%(title)s.%(ext)s',
-        'verbose': True,
+        'verbose': False,
     }
     
     try:
@@ -99,8 +99,15 @@ async def download_audio(ctx, song, logger):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             logger.debug(f"Starte Download für URL: {song.url}")
             info = await loop.run_in_executor(download_executor, lambda: ydl.extract_info(song.url, download=True))
-            filename = ydl.prepare_filename(info)
-            final_filename = filename.rsplit(".", 1)[0] + ".mp3"
+            
+            # Verwende den tatsächlichen Dateipfad, der von yt-dlp zurückgegeben wird
+            if 'filepath' in info:
+                final_filename = info['filepath']
+            else:
+                # Fallback für ältere yt-dlp Versionen
+                filename = ydl.prepare_filename(info)
+                final_filename = filename.rsplit(".", 1)[0] + ".mp3"
+            
             logger.debug(f"Download abgeschlossen. Datei: {final_filename}")
             
             if not os.path.exists(final_filename):

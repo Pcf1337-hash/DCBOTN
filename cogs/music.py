@@ -203,9 +203,9 @@ class Music(commands.Cog):
         try:
             if ':' in time_input:
                 minutes, seconds = map(int, time_input.split(':'))
-                total_seconds = (minutes * 60 + seconds) // 2
+                total_seconds = minutes * 60 + seconds
             else:
-                total_seconds = int(time_input) // 2
+                total_seconds = int(time_input)
 
             if total_seconds < 0 or total_seconds > self.current_song.duration:
                 await interaction.response.defer()

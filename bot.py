@@ -32,13 +32,29 @@ class GrooveMaster(commands.Bot):
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
             self.logger.debug(f"Unbekannter Befehl: {ctx.message.content}")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"Fehlender Parameter: {error.param.name}. Verwende `!help {ctx.command}` für mehr Informationen.", delete_after=10)
+            self.logger.warning(f"Fehlender Parameter für Befehl {ctx.command}: {error.param.name}")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send(f"Ungültiger Parameter. Verwende `!help {ctx.command}` für mehr Informationen.", delete_after=10)
+            self.logger.warning(f"Ungültiger Parameter für Befehl {ctx.command}: {str(error)}")
+        elif isinstance(error, commands.MissingPermissions):
+            await ctx.send("Du hast nicht die erforderlichen Berechtigungen für diesen Befehl.", delete_after=10)
+            self.logger.warning(f"Benutzer {ctx.author} hat versucht, {ctx.command} ohne Berechtigung auszuführen")
+        elif isinstance(error, commands.BotMissingPermissions):
+            await ctx.send("Dem Bot fehlen die erforderlichen Berechtigungen für diesen Befehl.", delete_after=10)
+            self.logger.error(f"Bot fehlen Berechtigungen für Befehl {ctx.command}: {error.missing_permissions}")
+        elif isinstance(error, commands.NoPrivateMessage):
+            await ctx.send("Dieser Befehl kann nicht in privaten Nachrichten verwendet werden.", delete_after=10)
+            self.logger.debug(f"Befehl {ctx.command} wurde in privater Nachricht versucht")
         else:
             self.logger.error(f"Fehler beim Ausführen eines Befehls: {str(error)}")
+            await ctx.send("Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es später erneut.", delete_after=10)
 
     async def on_message(self, message):
         self.logger.debug(f"Nachricht erhalten: {message.content}")
         await self.process_commands(message)
 
 bot = GrooveMaster()
-bot.run(os.getenv("DISCORD_TOKEN"))
+bot.run(os.getenv("DISCORD_BOT_TOKEN"))
 
