@@ -1,0 +1,1 @@
+screen -s dcbot python3 main.py
