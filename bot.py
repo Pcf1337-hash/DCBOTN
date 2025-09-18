@@ -9,6 +9,7 @@ from utils.logger import setup_logger, get_logger
 from utils.monitoring import performance_monitor
 from utils.cache import cache_manager
 from utils.exceptions import *
+from web_integration import setup_web_integration
 import time
 
 load_dotenv()
@@ -36,6 +37,9 @@ class GrooveMaster(commands.Bot):
         self.start_time = time.time()
         self.owner_ids = set(settings.owner_ids)
         
+        # Setup web integration
+        self.web_integration = setup_web_integration(self)
+        
         # Performance tracking
         self.command_count = 0
         self.error_count = 0
@@ -61,6 +65,13 @@ class GrooveMaster(commands.Bot):
         # Start monitoring
         if settings.enable_metrics:
             await performance_monitor.start_monitoring()
+        
+        # Start web integration
+        if settings.enable_web_interface:
+            try:
+                await self.web_integration.start()
+            except Exception as e:
+                self.logger.error("Failed to start web integration", error=str(e))
         
         self.logger.info("Bot setup completed")
 
@@ -285,6 +296,10 @@ class GrooveMaster(commands.Bot):
         # Stop monitoring
         if settings.enable_metrics:
             await performance_monitor.stop_monitoring()
+        
+        # Stop web integration
+        if hasattr(self, 'web_integration'):
+            await self.web_integration.stop()
         
         # Cleanup music cog
         music_cog = self.get_cog('Music')

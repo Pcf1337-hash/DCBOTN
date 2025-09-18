@@ -55,6 +55,8 @@ class BotSettings(BaseSettings):
     enable_auto_disconnect: bool = Field(default=True, env="ENABLE_AUTO_DISCONNECT")
     auto_disconnect_timeout: int = Field(default=300, env="AUTO_DISCONNECT_TIMEOUT", ge=60)
     enable_user_playlists: bool = Field(default=False, env="ENABLE_USER_PLAYLISTS")
+    enable_web_interface: bool = Field(default=True, env="ENABLE_WEB_INTERFACE")
+    web_port: int = Field(default=3000, env="WEB_PORT", ge=1024, le=65535)
     
     @validator('owner_ids', pre=True)
     def parse_owner_ids(cls, v):
